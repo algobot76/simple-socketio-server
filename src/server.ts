@@ -33,19 +33,27 @@ io.on("connection", socket => {
     console.log(`data: ${data}`);
 
     if (data) {
+      const usrIpAddr: string = socket.handshake.address;
+
       fs.readFile(dbLocation, (err, currData) => {
         if (err) {
           console.log(err);
         }
 
         const json: any[] = JSON.parse(currData.toString());
-        json.push({ message: data });
+        const entry: any = {
+          usrIpAddr,
+          message: data,
+        };
+        json.push(entry);
 
         fs.writeFile(dbLocation, JSON.stringify(json), err => {
           if (err) {
             console.log(err);
           }
         });
+
+        socket.broadcast.emit("update", entry);
       });
     }
   });
