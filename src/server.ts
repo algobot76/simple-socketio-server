@@ -12,6 +12,12 @@ export default class Server {
   private port: string;
   private userCount: number = 0;
 
+  /**
+   * Constructor for the server class
+   *
+   * @param filePath - The file path of the json file to be written to.
+   * @param port - The port used by the server.
+   */
   constructor(filePath: string, port?: string) {
     if (port) {
       this.port = port;
@@ -24,11 +30,15 @@ export default class Server {
     this.filePath = filePath;
   }
 
+  /**
+   * Opens the server
+   */
   public open(): void {
     this.server.listen(this.port, () => {
       console.log(`Listening at port: ${this.port}`);
     });
 
+    // Try to re-setup the server after 1000ms
     this.server.on("error", (err: any) => {
       if (err.code === "EADDRINUSE") {
         console.log("Address in use, retrying...");
@@ -45,6 +55,7 @@ export default class Server {
 
       socket.on("add data", data => {
         console.log(`data: ${data}`);
+
 
         if (data) {
           const usrIpAddr: string = socket.handshake.address;
@@ -79,6 +90,9 @@ export default class Server {
     });
   }
 
+  /**
+   * Closes the server
+   */
   public close(): void {
     console.log("Closing the server");
     this.io.close();
