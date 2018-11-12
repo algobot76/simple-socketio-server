@@ -56,7 +56,6 @@ export default class Server {
       socket.on("add data", data => {
         console.log(`data: ${data}`);
 
-
         if (data) {
           const usrIpAddr: string = socket.handshake.address;
 
@@ -78,8 +77,15 @@ export default class Server {
               }
             });
 
+            socket.emit("status", {
+              status: 200,
+              message: "Data has been successfully added",
+            });
             socket.broadcast.emit("update", entry);
           });
+        } else {
+          // Data should not be empty
+          socket.emit("status", { status: 400, message: "Invalid request" });
         }
       });
 
